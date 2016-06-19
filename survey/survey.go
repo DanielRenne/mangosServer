@@ -14,15 +14,10 @@ type Server struct {
 	sock mangos.Socket
 }
 
-type SurveyResponse []byte
-
-type SurveyResults struct {
-	Responses []SurveyResponse
-	Err       error
-}
+type ResponseHandler func([]byte)
 
 //Starts a Survey on the specified url for a specif.
-func (self *Server) Listen(url string, seconds time.Duration) error {
+func (self *Server) Listen(url string, ms time.Duration) error {
 
 	self.url = url
 	var err error
@@ -36,7 +31,7 @@ func (self *Server) Listen(url string, seconds time.Duration) error {
 	if err = self.sock.Listen(url); err != nil {
 		return err
 	}
-	err = self.sock.SetOption(mangos.OptionSurveyTime, time.Second*seconds)
+	err = self.sock.SetOption(mangos.OptionSurveyTime, time.Millisecond*ms)
 	if err != nil {
 		return err
 	}
@@ -46,33 +41,48 @@ func (self *Server) Listen(url string, seconds time.Duration) error {
 }
 
 //Send the survey question to clients and set a channel of slice messages to process.
-func (self *Server) Send(payload []byte, values chan SurveyResults) {
+func (self *Server) Send(payload []byte, handler ResponseHandler) error {
 
 	var err error
-	var results SurveyResults
 
 	if err = self.sock.Send(payload); err != nil {
-		results.Err = err
-		values <- results
-		return
+		return err
 	}
 
-	var responses []SurveyResponse
+	go self.processData(handler)
 
+	return nil
+}
+
+//Handles the survey responses.
+func (self *Server) processData(handler ResponseHandler) {
+
+	var msg []byte
+	var err error
 	for {
-		var msg SurveyResponse
 		if msg, err = self.sock.Recv(); err != nil {
 			break
 		}
-		responses = append(responses, msg)
+		go handler(msg)
 	}
-
-	results.Responses = responses
-
-	values <- results
 }
 
-// //Sends the survey for a go routine.
-// func sendSurvey(self *Server, payload []byte, values chan SurveyResults) {
+// var src = rand.NewSource(time.Now().UnixNano())
 
+// func RandStringBytesMaskImprSrc(n int) string {
+// 	b := make([]byte, n)
+// 	// A src.Int63() generates 63 random bits, enough for letterIdxMax characters!
+// 	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
+// 		if remain == 0 {
+// 			cache, remain = src.Int63(), letterIdxMax
+// 		}
+// 		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+// 			b[i] = letterBytes[idx]
+// 			i--
+// 		}
+// 		cache >>= letterIdxBits
+// 		remain--
+// 	}
+
+// 	return string(b)
 // }

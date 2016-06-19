@@ -6,16 +6,25 @@ import (
 	"github.com/go-mangos/mangos/transport/ipc"
 	"github.com/go-mangos/mangos/transport/tcp"
 	// "strings"
+
 	"testing"
 	"time"
 )
 
 const url = "tcp://127.0.0.1:600"
 
+var surveyResponseChannel chan string
+var tGlobal *testing.T
+
 //Creates a new Survey Server and Tests a single Survey
 func TestSingleSurvey(t *testing.T) {
+	tGlobal = t
+	// surveyResponseChannel = make(chan string)
+
 	var s Server
-	err := s.Listen(url, 2)
+	t.Log("Starting Survey Server")
+
+	err := s.Listen(url, 500)
 	if err != nil {
 		t.Errorf("Error at survey.TestSingleSurvey:  %v", err.Error)
 	}
@@ -24,10 +33,13 @@ func TestSingleSurvey(t *testing.T) {
 
 	if sock, err = respondent.NewSocket(); err != nil {
 		t.Errorf("Error creating new Socket at survey.TestSingleSurvey:  %v", err.Error)
+		return
 	}
 
 	sock.AddTransport(ipc.NewTransport())
 	sock.AddTransport(tcp.NewTransport())
+
+	t.Log("Connecting to Survey Server")
 
 	if err = sock.Dial(url); err != nil {
 		t.Errorf("Error Dialing at survey.TestSingleSurvey:  %v", err.Error)
@@ -36,25 +48,27 @@ func TestSingleSurvey(t *testing.T) {
 
 	messages := make(chan string)
 
-	go respondToSurvey(sock, t, messages, "TestSingle", "HelloWorld")
+	go respondToSurvey(sock, t, messages, "TestSurvey", "HelloWorld")
 
-	time.Sleep(2 * time.Second)
-	results := make(chan SurveyResults)
-	go s.Send([]byte("TestSingle"), results)
+	time.Sleep(1 * time.Second)
 
-	msg := <-messages
-	t.Log(msg)
-
-	sResults := <-results
-
-	if sResults.Err != nil {
-		t.Errorf("Error at survey.TestSingleSurvey:  %v", sResults.Err.Error)
+	err = s.Send([]byte("TestSurvey"), handleSurveyResponse)
+	if err != nil {
+		t.Errorf("Error sending survey message at survey.TestSingleSurvey:  %v", err.Error)
 		return
 	}
 
-	// go subscribeToAll(sock, t, messages)
+	time.Sleep(1 * time.Second)
+	msg := <-messages
+	t.Log(msg)
+}
 
-	// s.Publish([]byte("TestSubscribeAll"))
+func handleSurveyResponse(msg []byte) {
+
+	if string(msg) != "HelloWorld" {
+		tGlobal.Errorf("Failed to match the survey response message at survey.TestSingleSurvey")
+		return
+	}
 
 }
 
