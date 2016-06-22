@@ -18,8 +18,8 @@ type Server struct {
 
 type ResponseHandler func([]byte)
 
-//Starts a Survey on the specified url for a specif.
-func (self *Server) Listen(url string, ms time.Duration, handler ResponseHandler) error {
+//Starts a Survey on the specified url for a specified duration for clients to repsond.  A set of workers can run to handle more traffic.
+func (self *Server) Listen(url string, ms time.Duration, workers int, handler ResponseHandler) error {
 
 	self.url = url
 	self.surveySent = make(chan string)
@@ -39,8 +39,9 @@ func (self *Server) Listen(url string, ms time.Duration, handler ResponseHandler
 	if err != nil {
 		return err
 	}
-
-	go self.processData(handler)
+	for id := 0; id < workers; id++ {
+		go self.processData(handler)
+	}
 
 	return nil
 

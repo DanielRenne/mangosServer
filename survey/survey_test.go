@@ -24,7 +24,7 @@ func TestSingleSurvey(t *testing.T) {
 	var s Server
 	t.Log("Starting Survey Server")
 
-	err := s.Listen(url, 100, handleSurveyResponse)
+	err := s.Listen(url, 100, 2, handleSurveyResponse)
 	if err != nil {
 		t.Errorf("Error at survey.TestSingleSurvey:  %v", err.Error)
 	}
