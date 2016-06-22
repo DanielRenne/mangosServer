@@ -6,20 +6,24 @@ import (
 	"github.com/go-mangos/mangos/protocol/surveyor"
 	"github.com/go-mangos/mangos/transport/ipc"
 	"github.com/go-mangos/mangos/transport/tcp"
+	"log"
 	"time"
 )
 
 type Server struct {
-	url  string
-	sock mangos.Socket
+	url        string
+	sock       mangos.Socket
+	surveySent chan string
 }
 
 type ResponseHandler func([]byte)
 
 //Starts a Survey on the specified url for a specif.
-func (self *Server) Listen(url string, ms time.Duration) error {
+func (self *Server) Listen(url string, ms time.Duration, handler ResponseHandler) error {
 
 	self.url = url
+	self.surveySent = make(chan string)
+
 	var err error
 
 	if self.sock, err = surveyor.NewSocket(); err != nil {
@@ -36,12 +40,14 @@ func (self *Server) Listen(url string, ms time.Duration) error {
 		return err
 	}
 
+	go self.processData(handler)
+
 	return nil
 
 }
 
 //Send the survey question to clients and set a channel of slice messages to process.
-func (self *Server) Send(payload []byte, handler ResponseHandler) error {
+func (self *Server) Send(payload []byte) error {
 
 	var err error
 
@@ -49,7 +55,7 @@ func (self *Server) Send(payload []byte, handler ResponseHandler) error {
 		return err
 	}
 
-	go self.processData(handler)
+	self.surveySent <- "Survey Sent"
 
 	return nil
 }
@@ -59,9 +65,14 @@ func (self *Server) processData(handler ResponseHandler) {
 
 	var msg []byte
 	var err error
+
+	//Wait for a survey to be sent
+	s := <-self.surveySent
+	log.Println(s)
+
 	for {
 		if msg, err = self.sock.Recv(); err != nil {
-			break
+			continue
 		}
 		go handler(msg)
 	}

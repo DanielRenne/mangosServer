@@ -24,7 +24,7 @@ func TestSingleSurvey(t *testing.T) {
 	var s Server
 	t.Log("Starting Survey Server")
 
-	err := s.Listen(url, 500)
+	err := s.Listen(url, 100, handleSurveyResponse)
 	if err != nil {
 		t.Errorf("Error at survey.TestSingleSurvey:  %v", err.Error)
 	}
@@ -52,7 +52,7 @@ func TestSingleSurvey(t *testing.T) {
 
 	time.Sleep(1 * time.Second)
 
-	err = s.Send([]byte("TestSurvey"), handleSurveyResponse)
+	err = s.Send([]byte("TestSurvey"))
 	if err != nil {
 		t.Errorf("Error sending survey message at survey.TestSingleSurvey:  %v", err.Error)
 		return

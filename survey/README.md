@@ -13,12 +13,12 @@ Example Code to start a survey server, send a survey, and receive a survey respo
 
 	func main(){
 
-		err := s.Listen(url, 500)
+		err := s.Listen(url, 500, handleSurveyResponse)
 		if err != nil {
 			log.Printf("Error:  %v", err.Error)
 		}
 
-		err = s.Send([]byte("TestSurvey"), handleSurveyResponse)
+		err = s.Send([]byte("TestSurvey"))
 		if err != nil {
 			log.Printf("Error sending survey message:  %v", err.Error)
 			return
