@@ -1,5 +1,5 @@
-//Package pubsub supports the implementation of a publishing server.
-package pubsub
+//Package pub supports the implementation of a publishing server.
+package pub
 
 import (
 	"fmt"

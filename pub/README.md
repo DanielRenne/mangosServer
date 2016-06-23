@@ -7,7 +7,7 @@ To publish a broadcast to all subscribers:
 	package main
 	
 	import (
-		"github.com/DanielRenne/mangosServer/pubsub"
+		"github.com/DanielRenne/mangosServer/pub"
 		"log"
 		"time"
 	)
@@ -16,7 +16,7 @@ To publish a broadcast to all subscribers:
 	
 	//Creates a new Pub Server and broadcasts a plain message
 	func main() {
-		var s pubsub.Server
+		var s pub.Server
 		err := s.Listen(url)
 		if err != nil {
 			log.Printf("Error:  %v", err.Error())
@@ -96,7 +96,7 @@ To publish a Topic to all topic subscribers.
 	package main
 	
 	import (
-		"github.com/DanielRenne/mangosServer/pubsub"
+		"github.com/DanielRenne/mangosServer/pub"
 		"log"
 		"time"
 	)
@@ -105,7 +105,7 @@ To publish a Topic to all topic subscribers.
 	
 	//Creates a new Pub Server and broadcasts a plain message
 	func main() {
-		var s pubsub.Server
+		var s pub.Server
 		err := s.Listen(url)
 		if err != nil {
 			log.Printf("Error:  %v", err.Error())
