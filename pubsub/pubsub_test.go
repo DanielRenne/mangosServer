@@ -24,13 +24,13 @@ func TestPubSubBroadCastAll(t *testing.T) {
 	var errSubScribe error
 
 	if sock, errSubScribe = sub.NewSocket(); errSubScribe != nil {
-		t.Errorf("Error Creating Socket at pubsub_test.TestPubSubBroadCastAll:  %v", errSubScribe.Error)
+		t.Errorf("Error Creating Socket at pubsub_test.TestPubSubBroadCastAll:  %v", errSubScribe.Error())
 		return
 	}
 	sock.AddTransport(ipc.NewTransport())
 	sock.AddTransport(tcp.NewTransport())
 	if errSubScribe = sock.Dial(url); errSubScribe != nil {
-		t.Errorf("Error Dialing at pubsub_test.TestPubSubBroadCastAll:  %v", errSubScribe.Error)
+		t.Errorf("Error Dialing at pubsub_test.TestPubSubBroadCastAll:  %v", errSubScribe.Error())
 		return
 	}
 
@@ -50,20 +50,20 @@ func TestPubSubBroadCastTopic(t *testing.T) {
 	var s Server
 	err := s.Listen(urlTopic)
 	if err != nil {
-		t.Errorf("Error at pubsub_test.TestPubSubBroadCastTopic:  %v", err.Error)
+		t.Errorf("Error at pubsub_test.TestPubSubBroadCastTopic:  %v", err.Error())
 	}
 
 	var sock mangos.Socket
 	var errSubScribe error
 
 	if sock, errSubScribe = sub.NewSocket(); errSubScribe != nil {
-		t.Errorf("Error Creating Socket at pubsub_test.TestPubSubBroadCastTopic:  %v", errSubScribe.Error)
+		t.Errorf("Error Creating Socket at pubsub_test.TestPubSubBroadCastTopic:  %v", errSubScribe.Error())
 		return
 	}
 	sock.AddTransport(ipc.NewTransport())
 	sock.AddTransport(tcp.NewTransport())
 	if errSubScribe = sock.Dial(urlTopic); errSubScribe != nil {
-		t.Errorf("Error Dialing at pubsub_test.TestPubSubBroadCastTopic:  %v", errSubScribe.Error)
+		t.Errorf("Error Dialing at pubsub_test.TestPubSubBroadCastTopic:  %v", errSubScribe.Error())
 		return
 	}
 
@@ -85,13 +85,13 @@ func subscribeToAll(sock mangos.Socket, t *testing.T, messages chan string) {
 	// Empty byte array effectively subscribes to everything
 	err := sock.SetOption(mangos.OptionSubscribe, []byte(""))
 	if err != nil {
-		t.Errorf("Error Subscribing at pubsub_test.subscribeToAll:  %v", err.Error)
+		t.Errorf("Error Subscribing at pubsub_test.subscribeToAll:  %v", err.Error())
 		messages <- "Test Failed"
 		return
 	}
 
 	if msg, err = sock.Recv(); err != nil {
-		t.Errorf("Error Recieving data at pubsub_test.subscribeToAll:  %v", err.Error)
+		t.Errorf("Error Recieving data at pubsub_test.subscribeToAll:  %v", err.Error())
 		messages <- "Test Failed"
 		return
 	}
@@ -113,13 +113,13 @@ func subscribeToTopic(sock mangos.Socket, t *testing.T, topic string, messages c
 	// Empty byte array effectively subscribes to everything
 	err := sock.SetOption(mangos.OptionSubscribe, []byte(topic))
 	if err != nil {
-		t.Errorf("Error Subscribing at pubsub_test.subscribeToTopic:  %v", err.Error)
+		t.Errorf("Error Subscribing at pubsub_test.subscribeToTopic:  %v", err.Error())
 		messages <- "Test Failed"
 		return
 	}
 
 	if msg, err = sock.Recv(); err != nil {
-		t.Errorf("Error Recieving data at pubsub_test.subscribeToTopic:  %v", err.Error)
+		t.Errorf("Error Recieving data at pubsub_test.subscribeToTopic:  %v", err.Error())
 		messages <- "Test Failed"
 		return
 	}

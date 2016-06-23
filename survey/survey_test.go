@@ -26,13 +26,13 @@ func TestSingleSurvey(t *testing.T) {
 
 	err := s.Listen(url, 100, 2, handleSurveyResponse)
 	if err != nil {
-		t.Errorf("Error at survey.TestSingleSurvey:  %v", err.Error)
+		t.Errorf("Error at survey.TestSingleSurvey:  %v", err.Error())
 	}
 
 	var sock mangos.Socket
 
 	if sock, err = respondent.NewSocket(); err != nil {
-		t.Errorf("Error creating new Socket at survey.TestSingleSurvey:  %v", err.Error)
+		t.Errorf("Error creating new Socket at survey.TestSingleSurvey:  %v", err.Error())
 		return
 	}
 
@@ -42,7 +42,7 @@ func TestSingleSurvey(t *testing.T) {
 	t.Log("Connecting to Survey Server")
 
 	if err = sock.Dial(url); err != nil {
-		t.Errorf("Error Dialing at survey.TestSingleSurvey:  %v", err.Error)
+		t.Errorf("Error Dialing at survey.TestSingleSurvey:  %v", err.Error())
 		return
 	}
 
@@ -54,7 +54,7 @@ func TestSingleSurvey(t *testing.T) {
 
 	err = s.Send([]byte("TestSurvey"))
 	if err != nil {
-		t.Errorf("Error sending survey message at survey.TestSingleSurvey:  %v", err.Error)
+		t.Errorf("Error sending survey message at survey.TestSingleSurvey:  %v", err.Error())
 		return
 	}
 
@@ -78,7 +78,7 @@ func respondToSurvey(sock mangos.Socket, t *testing.T, messages chan string, sur
 	var msg []byte
 
 	if msg, err = sock.Recv(); err != nil {
-		t.Errorf("Error Receiving at survey.respondToSurvey:  %v", err.Error)
+		t.Errorf("Error Receiving at survey.respondToSurvey:  %v", err.Error())
 		messages <- "Test Failed"
 		return
 	}
@@ -90,7 +90,7 @@ func respondToSurvey(sock mangos.Socket, t *testing.T, messages chan string, sur
 	}
 
 	if err = sock.Send([]byte(surveyResponse)); err != nil {
-		t.Errorf("Error Sending Survey Response at survey.respondToSurvey:  %v", err.Error)
+		t.Errorf("Error Sending Survey Response at survey.respondToSurvey:  %v", err.Error())
 		messages <- "Test Failed"
 		return
 	}
