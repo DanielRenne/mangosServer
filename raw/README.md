@@ -29,7 +29,7 @@ Example Code to start a raw reply server, reply with a new message.  The server 
 	}
 	
 	func handleRawRequest(s *raw.Server, m *mangos.Message) {
-		//Process Survey Results.
+
 		log.Printf(string(m.Body))
 		m.Body = []byte("Custom Response to the Request")
 		s.Reply(m)
