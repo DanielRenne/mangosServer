@@ -1,11 +1,11 @@
-//Package raw provides implementation of a raw mangos server.
+// Package raw provides implementation of a raw mangos server.
 package raw
 
 import (
-	"github.com/go-mangos/mangos"
-	"github.com/go-mangos/mangos/protocol/rep"
-	"github.com/go-mangos/mangos/transport/ipc"
-	"github.com/go-mangos/mangos/transport/tcp"
+	mangos "nanomsg.org/go-mangos"
+	"nanomsg.org/go-mangos/protocol/rep"
+	"nanomsg.org/go-mangos/transport/ipc"
+	"nanomsg.org/go-mangos/transport/tcp"
 )
 
 type Server struct {
@@ -15,7 +15,7 @@ type Server struct {
 
 type ResponseHandler func(*Server, *mangos.Message)
 
-//Starts a Raw Socket on the specified url.  A set of workers can run to handle more traffic.
+// Starts a Raw Socket on the specified url.  A set of workers can run to handle more traffic.
 func (self *Server) Listen(url string, workers int, handler ResponseHandler) error {
 
 	self.url = url
@@ -46,7 +46,7 @@ func (self *Server) Listen(url string, workers int, handler ResponseHandler) err
 
 }
 
-//Reply to the Raw Request Message.
+// Reply to the Raw Request Message.
 func (self *Server) Reply(m *mangos.Message) error {
 
 	var err error
@@ -58,7 +58,7 @@ func (self *Server) Reply(m *mangos.Message) error {
 	return nil
 }
 
-//Handles the raw Request Messages.
+// Handles the raw Request Messages.
 func (self *Server) processData(handler ResponseHandler) {
 
 	for {

@@ -1,12 +1,13 @@
-//Package pub supports the implementation of a publishing server.
+// Package pub supports the implementation of a publishing server.
 package pub
 
 import (
 	"fmt"
-	"github.com/go-mangos/mangos"
-	"github.com/go-mangos/mangos/protocol/pub"
-	"github.com/go-mangos/mangos/transport/ipc"
-	"github.com/go-mangos/mangos/transport/tcp"
+
+	mangos "nanomsg.org/go-mangos"
+	"nanomsg.org/go-mangos/protocol/pub"
+	"nanomsg.org/go-mangos/transport/ipc"
+	"nanomsg.org/go-mangos/transport/tcp"
 )
 
 type Server struct {
@@ -14,7 +15,7 @@ type Server struct {
 	sock mangos.Socket
 }
 
-//Starts listening for Subscriptions on the specified url.
+// Starts listening for Subscriptions on the specified url.
 func (self *Server) Listen(url string) error {
 
 	self.url = url
@@ -33,13 +34,13 @@ func (self *Server) Listen(url string) error {
 	return nil
 }
 
-//Publish a raw payload to all subscribers.
+// Publish a raw payload to all subscribers.
 func (self *Server) Publish(payload []byte) error {
 	err := self.sock.Send(payload)
 	return err
 }
 
-//Publish a specific topic to all subscribers.
+// Publish a specific topic to all subscribers.
 func (self *Server) PublishTopic(topic string, message string) error {
 	err := self.sock.Send([]byte(fmt.Sprintf("%s|%s", topic, message)))
 	return err
